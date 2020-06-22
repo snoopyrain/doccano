@@ -10,11 +10,11 @@ services:
       ADMIN_USERNAME: "admin"
       ADMIN_PASSWORD: "password"
       ADMIN_EMAIL: "admin@example.com"
-      DATABASE_URL: "postgres://doccano:doccano@postgres:5432/doccano?sslmode=disable"
+      DATABASE_URL: "mysql://root:password@mysql:3306/db"
       ALLOW_SIGNUP: "False"
       DEBUG: "False"
     depends_on:
-      - postgres
+      - mysql
     networks:
       - network-backend
       - network-frontend
@@ -36,21 +36,40 @@ services:
     networks:
       - network-frontend
 
-  postgres:
-    image: postgres:12.0-alpine
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
+#  postgres:
+#    image: postgres:12.0-alpine
+##    volumes:
+##      - postgres_data:/var/lib/postgresql/data/
+#    environment:
+#      POSTGRES_USER: "doccano"
+#      POSTGRES_PASSWORD: "doccano"
+#      POSTGRES_DB: "doccano"
+#    networks:
+#      - network-backend
+
+  mysql:
+    image: mysql:5.7
+    restart: always
     environment:
-      POSTGRES_USER: "doccano"
-      POSTGRES_PASSWORD: "doccano"
-      POSTGRES_DB: "doccano"
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
     networks:
       - network-backend
+    volumes:
+      - my-db:/var/lib/mysql
+
 
 volumes:
   postgres_data:
   static_volume:
   www:
+  my-db:
 
 networks:
   network-backend:
